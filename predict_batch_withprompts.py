@@ -47,7 +47,7 @@ def parse_args():
     parser.add_argument(
         "--conf",
         type=float,
-        default=0.55,
+        default=0.30,
         help="Minimum confidence threshold to keep detections"
     )     
     parser.add_argument(
@@ -88,6 +88,12 @@ def parse_args():
         default ="tram",
         help = "Whether to give priority to a class"
     )
+    parser.add_argument(
+        "--batch_size",
+        type = int,
+        default = 8,
+        help = "Define the batch size for detection"
+    )
     return parser.parse_args()
 
 def chunked(iterable, batch_size):
@@ -106,10 +112,8 @@ def main():
 
     # Collect image paths
     image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
-    batch_size = 8  # 👈 set your batch size here
 
-    # Loop through image batches
-    for batch_paths in chunked(image_paths, batch_size):
+    for batch_paths in chunked(image_paths, args.batch_size):
         # Load current batch of images
         batch_images = [Image.open(str(p)).convert("RGB") for p in batch_paths]
 
