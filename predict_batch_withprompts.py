@@ -125,7 +125,7 @@ def main():
             file_path = Path(image_path)
             file_folder = file_path.parent
             out_name = file_path.stem
-            ext = file_path - out_name
+            ext = str(file_path) - out_name
             print(ext)
             
             detections = sv.Detections.from_ultralytics(result)
