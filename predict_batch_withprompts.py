@@ -125,8 +125,7 @@ def main():
             file_path = Path(image_path)
             file_folder = file_path.parent
             out_name = file_path.stem
-            ext = str(file_path.suffix)[1:]
-            print(ext)
+            ext = str(file_path.suffix)
             
             detections = sv.Detections.from_ultralytics(result)
                 # Filter by confidence
