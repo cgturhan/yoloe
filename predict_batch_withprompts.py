@@ -134,7 +134,7 @@ def main():
             conf_mask = detections.confidence > args.conf
             detections = detections[conf_mask]
 
-            if args.priority_cls!=None and len(detections) > 0:
+            if args.priority_cls!=None and len(detections) > 1:
                 all_boxes = torch.tensor(np.array(detections.xyxy), dtype=torch.float32)
                 iou_threshold = 0.65
                 if args.priority_cls in detections["class_name"]:              
