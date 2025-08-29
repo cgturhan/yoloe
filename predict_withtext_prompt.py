@@ -10,10 +10,7 @@ from PIL import Image
 from torchvision.ops import box_iou
 from ultralytics import YOLOE
 import supervision as sv
-
 from save_detections import save_detections_to_cocoformat
-
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -111,12 +108,11 @@ def main():
 
     # Convert predictions to Supervision detections
     detections = sv.Detections.from_ultralytics(results[0])
+    
     if len(detections)>0:
         # Filter by confidence
         conf_mask = detections.confidence > args.conf
         detections = detections[conf_mask]
-    
-        
     
         if args.priority_cls!=None and len(detections) > 1:
             all_boxes = torch.tensor(np.array(detections.xyxy), dtype=torch.float32)
@@ -127,7 +123,6 @@ def main():
                 # If no trams, keep everything
                 if not filtered_indices:
                     keep_mask = torch.ones(len(detections), dtype=torch.bool)
-    
                 else:
                     # Convert all boxes to tensor                
                     filtered_boxes = all_boxes[filtered_indices]
@@ -146,7 +141,6 @@ def main():
                         mask=detections.mask[keep_mask] if detections.mask is not None else None,
                     )
               
-                
         # Prepare labels
         class_names = [args.names[class_id] for class_id in detections.class_id.tolist()]
         if args.show_labels:
