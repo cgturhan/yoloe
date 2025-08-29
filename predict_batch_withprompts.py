@@ -125,12 +125,14 @@ def main():
     # Collect image paths
     image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
 
-    for batch_paths in tqdm(chunked(image_paths, args.batch_size)):
+    total_batches = math.ceil(len(image_paths) / args.batch_size)
+
+    for batch_paths in tqdm(chunked(image_paths, args.batch_size), total=total_batches, desc="Processing")
         # Load current batch of images
         batch_images = [Image.open(str(p)).convert("RGB") for p in batch_paths]
 
         # Run batch prediction
-        results = model.predict(batch_images, verbose=False)  # 🔁 returns list of results
+        results = model.predict(batch_images, verbose=False)  
 
         # Process each image-result pair
         for image_path, image, result in zip(batch_paths, batch_images, results):
