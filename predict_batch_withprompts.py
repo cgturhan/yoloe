@@ -11,6 +11,7 @@ from torchvision.ops import box_iou
 from ultralytics import YOLOE
 import supervision as sv
 from save_detections import save_detections_to_cocoformat, save_colored_instance_mask
+from tqdm import tqdm
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -113,7 +114,7 @@ def main():
     # Collect image paths
     image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
 
-    for batch_paths in chunked(image_paths, args.batch_size):
+    for batch_paths in tqdm(chunked(image_paths, args.batch_size)):
         # Load current batch of images
         batch_images = [Image.open(str(p)).convert("RGB") for p in batch_paths]
 
