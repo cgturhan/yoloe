@@ -90,7 +90,8 @@ def parse_args():
         type=str,
         default ="tram",
         help = "Whether to give priority to a class"
-    ) 
+    )
+    return parser.parse_args()
 
 def chunked(iterable, batch_size):
     """Yield successive batches from an iterable."""
