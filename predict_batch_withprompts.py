@@ -128,6 +128,8 @@ def main():
             out_cls = str(file_folder.name)
             out_dir = os.path.join(args.output_folder,out_cls)
             ext = str(file_path.suffix)
+            if glob.glob(f"{out_dir}/{image_name}-*{ext}"):
+                continue
             
             detections = sv.Detections.from_ultralytics(result)
                 # Filter by confidence
