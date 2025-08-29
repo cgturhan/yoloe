@@ -10,7 +10,7 @@ from PIL import Image
 from torchvision.ops import box_iou
 from ultralytics import YOLOE
 import supervision as sv
-from save_detections import save_detections_to_cocoformat
+from save_detections import save_detections_to_cocoformat, save_colored_instance_mask
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -181,11 +181,12 @@ def main():
                     if mask_cls in class_names:
                         priority_mask = torch.tensor([cls == mask_cls for cls in class_names])
                         filtered_detections = detections[priority_mask]
+                        save_colored_instance_mask(filtered_detections.mask,f"{out_name}-roadmask{ext}")
     
-                        annotated_image = sv.MaskAnnotator(
-                            color_lookup=sv.ColorLookup.CLASS,
-                            opacity=0.4
-                        ).annotate(scene=annotated_image, detections=filtered_detections)
+                        #annotated_image = sv.MaskAnnotator(
+                        #    color_lookup=sv.ColorLookup.CLASS,
+                        #    opacity=0.4
+                        #).annotate(scene=annotated_image, detections=filtered_detections)
             
                         #annotated_image = sv.BoxAnnotator(
                         #    color_lookup=sv.ColorLookup.CLASS,
