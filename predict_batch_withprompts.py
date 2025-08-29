@@ -124,7 +124,9 @@ def main():
             print(f"Reading results of {image_path}") 
             file_path = Path(image_path)
             file_folder = file_path.parent
-            out_name = file_path.stem
+            image_name = file_path.stem
+            out_cls = str(file_folder.name)
+            out_dir = os.path.join(args.output_folder,out_cls)
             ext = str(file_path.suffix)
             
             detections = sv.Detections.from_ultralytics(result)
@@ -197,7 +199,7 @@ def main():
                         color_lookup=sv.ColorLookup.CLASS,
                         opacity=0.4
                     ).annotate(scene=annotated_image, detections=detections)
-                    output_file = f"{out_name}-masked{ext}"
+                    output_file = f"{out_dir}/{image_name}-masked{ext}"
                
                 if args.show_labels:
                     annotated_image = sv.BoxAnnotator(
@@ -209,13 +211,14 @@ def main():
                         text_scale=text_scale,
                         smart_position=True
                     ).annotate(scene=annotated_image, detections=detections, labels=labels)
-                    output_file = f"{out_name}-annotated{ext}"
+                    output_file = f"{out_dir}/{image_name}-annotated{ext}"
                 
                 annotated_image.save(os.path.join(args.output_folder, file_folder, output_file))
                 print(f"Annotated image saved to: {output_file}")
 
             if args.return_detection:
                 coco_output = save_detections_to_cocoformat(detections, args.source, args.names)
+                output_file =f"{out_dir}/{image_name}-annotations.json"
                 with open(output_file, "w") as f:
                     json.dump(coco_output, f, indent=4)
                 print(f"Saved detections in COCO format to: {output_file}")
