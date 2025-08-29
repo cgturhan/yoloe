@@ -10,7 +10,7 @@ from PIL import Image
 from torchvision.ops import box_iou
 from ultralytics import YOLOE
 import supervision as sv
-from save_detections import save_detections_to_cocoformat
+from save_detections import save_detections_to_cocoformat, save_colored_instance_mask
 
 def parse_args():
     parser = argparse.ArgumentParser()
