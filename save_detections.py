@@ -99,3 +99,18 @@ def save_detections_to_cocoformat(detections, image_filename, class_names):
 
     return coco_output
 
+
+def save_colored_instance_mask(masks, output_path):
+    N, H, W = masks.shape
+    rgba = np.zeros((H, W, 4), dtype=np.uint8)
+
+    for i in range(N):
+        color = [random.randint(50, 255) for _ in range(3)]
+        binary_mask = masks[i] > 0.5
+        for c in range(3):
+            rgba[:, :, c][binary_mask] = color[c]
+        rgba[:, :, 3][binary_mask] = 255  # Alpha channel
+
+    assert rgba.shape[2] == 4, "Expected RGBA with 4 channels"
+    image = Image.fromarray(rgba, mode='RGBA')
+    image.save(output_path)
