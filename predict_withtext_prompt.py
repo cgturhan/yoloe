@@ -160,12 +160,12 @@ def main():
             if mask_cls in class_names:
                 priority_mask = torch.tensor([cls == mask_cls for cls in class_names])
                 filtered_detections = detections[priority_mask]
-    
-                annotated_image = sv.MaskAnnotator(
-                    color_lookup=sv.ColorLookup.CLASS,
-                    opacity=0.4
-                ).annotate(scene=annotated_image, detections=filtered_detections)
-     
+                save_colored_instance_mask(filtered_detections.mask,f"{out_name}-roadmask{ext}")
+                #annotated_image = sv.MaskAnnotator(
+                #    color_lookup=sv.ColorLookup.CLASS,
+                #    opacity=0.4
+                #).annotate(scene=annotated_image, detections=filtered_detections)
+
                 #annotated_image = sv.BoxAnnotator(
                 #    color_lookup=sv.ColorLookup.CLASS,
                 #    thickness=thickness
