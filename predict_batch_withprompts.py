@@ -125,7 +125,10 @@ def main():
             file_path = Path(image_path)
             file_folder = file_path.parent
             out_name = file_path.stem
-            ext = file_path.suffix.lstrip('.') 
+            print(file_folder)
+            print(out_name)
+            ext = file_path.suffix.lower().lstrip('.') 
+            
             detections = sv.Detections.from_ultralytics(result)
                 # Filter by confidence
             conf_mask = detections.confidence > args.conf
