@@ -213,7 +213,7 @@ def main():
                     ).annotate(scene=annotated_image, detections=detections, labels=labels)
                     output_file = f"{out_dir}/{image_name}-annotated{ext}"
                 
-                annotated_image.save(os.path.join(args.output_folder, file_folder, output_file))
+                annotated_image.save(output_file)
                 print(f"Annotated image saved to: {output_file}")
 
             if args.return_detection:
