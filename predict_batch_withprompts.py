@@ -121,10 +121,11 @@ def main():
 
         # Process each image-result pair
         for image_path, image, result in zip(batch_paths, batch_images, results):
+            print(f"Reading results of {image_path}") 
             file_path = Path(image_path)
             file_folder = file_path.parent
             out_name = file_path.stem
-            ext = image_path.split('.')[-1]
+            ext = file_path.suffix.lstrip('.') 
             detections = sv.Detections.from_ultralytics(result)
                 # Filter by confidence
             conf_mask = detections.confidence > args.conf
