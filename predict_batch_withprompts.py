@@ -106,7 +106,7 @@ def chunked(iterable, batch_size):
 
 def main():
     args = parse_args()
-    log_file = os.path.join(output_dir, "yoloe_out.log")
+    log_file = os.path.join(args.output_path, "yoloe_out.log")
 
     logging.basicConfig(
         filename=log_file,
