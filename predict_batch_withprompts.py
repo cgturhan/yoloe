@@ -12,6 +12,8 @@ from ultralytics import YOLOE
 import supervision as sv
 from save_detections import save_detections_to_cocoformat, save_colored_instance_mask
 from tqdm import tqdm
+import glob
+import logging
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -104,6 +106,15 @@ def chunked(iterable, batch_size):
 
 def main():
     args = parse_args()
+    log_file = os.path.join(output_dir, "yoloe_out.log")
+
+    logging.basicConfig(
+        filename=log_file,
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
+    logging.info("Logging initialized.")
 
     # Load model once
     model = YOLOE(args.checkpoint)
@@ -123,7 +134,7 @@ def main():
 
         # Process each image-result pair
         for image_path, image, result in zip(batch_paths, batch_images, results):
-            print(f"Reading results of {image_path}") 
+            logging.info(f"Results for {image_path} ---------") 
             file_path = Path(image_path)
             file_folder = file_path.parent
             image_name = file_path.stem
@@ -198,7 +209,7 @@ def main():
                         #    thickness=thickness
                         #).annotate(scene=annotated_image, detections=detections[~priority_mask])
                     else:
-                        print("Road could not detected on given image!")
+                        logging.info("Road could not detected on given image!")
                 if args.save_annotations:
                     if args.return_instance_mask:
                         annotated_image = sv.MaskAnnotator(
@@ -220,16 +231,16 @@ def main():
                         output_file = f"{out_dir}/{image_name}-annotated{ext}"
                     
                     annotated_image.save(output_file)
-                    print(f"Annotated image saved to: {output_file}")
+                    logging.info(f"Annotated image saved to: {output_file}")
     
                 if args.return_detection:
                     coco_output = save_detections_to_cocoformat(detections, image_path, args.names)
                     output_file =f"{out_dir}/{image_name}-annotations.json"
                     with open(output_file, "w") as f:
                         json.dump(coco_output, f, indent=4)
-                    print(f"Saved detections in COCO format to: {output_file}")
+                    logging.info(f"Saved detections in COCO format to: {output_file}")
             else:
-                print(f"No detections for: {image_path}")
+                logging.info(f"No detections for: {image_path}")
 
 if __name__ == "__main__":
     main()
