@@ -127,7 +127,7 @@ def main():
 
     total_batches = math.ceil(len(image_paths) / args.batch_size)
 
-    for batch_paths in tqdm(chunked(image_paths, args.batch_size), total=total_batches, desc="Processing")
+    for batch_paths in tqdm(chunked(image_paths, args.batch_size), total=total_batches, desc="Processing"):
         # Load current batch of images
         batch_images = [Image.open(str(p)).convert("RGB") for p in batch_paths]
 
