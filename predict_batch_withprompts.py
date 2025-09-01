@@ -112,6 +112,7 @@ def main():
     logging.basicConfig(
         filename=log_file,
         level=logging.INFO,
+        filemode='w',
         format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
