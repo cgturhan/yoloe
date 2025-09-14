@@ -80,15 +80,15 @@ def save_detections_to_global_cocoformat(detections, image_filename, class_id_to
         x1, y1, x2, y2 = detections.xyxy[i]
         width = x2 - x1
         height = y2 - y1
-        class_name = detections.class_name[i]
         class_id = int(detections.class_id[i])
-        class_name = class_id_to_name[class_name]
+        class_name = class_id_to_name[class_id]
         confidence = float(detections.confidence[i])
 
         annotation = {
             "id": len(coco_output["annotations"]) + 1,
             "image_id": image_id,
             "category_id": class_id,
+            "class": class_name,
             "bbox": [float(x1), float(y1), float(width), float(height)],
             "area": float(width * height),
             "iscrowd": 0,
