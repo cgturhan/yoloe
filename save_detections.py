@@ -42,14 +42,14 @@ def generate_image_id_from_path(path: str) -> int:
     return int(hashlib.sha1(path.encode("utf-8")).hexdigest(), 16) % (10 ** 12)
 
 
-def save_detections_to_global_cocoformat(detections, image_filename, class_name_to_id, existing_coco=None):
+def save_detections_to_global_cocoformat(detections, image_filename, class_id_to_name, existing_coco=None):
     """
     Save detections to a COCO-format dictionary using a consistent class ID mapping.
 
     Args:
         detections: supervision.Detections object
         image_filename: str, path to the image
-        class_name_to_id: dict mapping class names to consistent IDs
+        class_id_to_name: dict mapping IDs to consistent class names 
         existing_coco: dict, optional existing COCO dictionary to accumulate
 
     Returns:
@@ -81,7 +81,8 @@ def save_detections_to_global_cocoformat(detections, image_filename, class_name_
         width = x2 - x1
         height = y2 - y1
         class_name = detections.class_name[i]
-        class_id = class_name_to_id[class_name]
+        class_id = int(detections.class_id[i])
+        class_name = class_id_to_name[class_name]
         confidence = float(detections.confidence[i])
 
         annotation = {
