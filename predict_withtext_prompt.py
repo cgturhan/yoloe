@@ -197,6 +197,7 @@ def main():
                 print(f"Annotated image saved to: {output_file}")
         if args.return_detection:
             coco_output = save_detections_to_cocoformat(detections, args.source, args.names)
+            output_file =f"{out_name}-annotations.json"
             with open(output_file, "w") as f:
                 json.dump(coco_output, f, indent=4)
             print(f"Saved detections in COCO format to: {output_file}")
