@@ -4,6 +4,8 @@ from pathlib import Path
 import os
 import hashlib
 from PIL import Image
+import random
+import numpy as np
 
 # Global containers
 coco_output = {
@@ -38,6 +40,63 @@ default_supercategory = "object"
 
 def generate_image_id_from_path(path: str) -> int:
     return int(hashlib.sha1(path.encode("utf-8")).hexdigest(), 16) % (10 ** 12)
+
+
+def save_detections_to_global_cocoformat(detections, image_filename, class_name_to_id, existing_coco=None):
+    """
+    Save detections to a COCO-format dictionary using a consistent class ID mapping.
+
+    Args:
+        detections: supervision.Detections object
+        image_filename: str, path to the image
+        class_name_to_id: dict mapping class names to consistent IDs
+        existing_coco: dict, optional existing COCO dictionary to accumulate
+
+    Returns:
+        coco_output: dict containing 'images', 'annotations', 'categories'
+    """
+    if existing_coco is None:
+        coco_output = {"images": [], "annotations": [], "categories": coco_categories.copy()}
+    else:
+        coco_output = existing_coco
+
+    image_id = int(hashlib.sha1(str(image_filename).encode("utf-8")).hexdigest(), 16) % (10 ** 12)
+
+    input_image = Image.open(image_filename).convert("RGB")
+    image_width, image_height = input_image.size
+
+    file_path = Path(image_filename)
+
+    # 1. Image info
+    coco_output["images"].append({
+        "id": image_id,
+        "file_name": file_path.name,
+        "width": image_width,
+        "height": image_height
+    })
+
+    # 2. Annotation info
+    for i in range(len(detections.xyxy)):
+        x1, y1, x2, y2 = detections.xyxy[i]
+        width = x2 - x1
+        height = y2 - y1
+        class_name = detections.class_name[i]
+        class_id = class_name_to_id[class_name]
+        confidence = float(detections.confidence[i])
+
+        annotation = {
+            "id": len(coco_output["annotations"]) + 1,
+            "image_id": image_id,
+            "category_id": class_id,
+            "bbox": [float(x1), float(y1), float(width), float(height)],
+            "area": float(width * height),
+            "iscrowd": 0,
+            "score": confidence
+        }
+        coco_output["annotations"].append(annotation)
+
+    return coco_output
+
 
 def save_detections_to_cocoformat(detections, image_filename, class_names):
     """
