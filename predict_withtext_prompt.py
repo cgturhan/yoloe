@@ -97,7 +97,7 @@ def main():
     if not args.output:
         out_name = img_path
     else:
-        out_name = os.path.join(args.output, out_name.split('/')[-1])
+        out_name = os.path.join(args.output, img_path.split('/')[-1])
                 
     image = Image.open(args.source).convert("RGB")
 
