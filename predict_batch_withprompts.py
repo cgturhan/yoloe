@@ -107,15 +107,17 @@ def chunked(iterable, batch_size):
 
 def main():
     args = parse_args()
-    log_file = os.path.join(args.output_folder, "yoloe_out.log")
+    log_dir = os.path.join(args.output_folder,"logs")
+    os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, "yoloe_out.log")
 
     logging.basicConfig(
-        filename=log_file,
-        level=logging.INFO,
-        filemode='w',
-        format="%(asctime)s - %(levelname)s - %(message)s"
+        level=logging.INFO,  # Log level: DEBUG / INFO / WARNING / ERROR
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler(log_file)
+        ]
     )
-
     logging.info("Logging initialized.")
 
     # Load model once
@@ -201,7 +203,7 @@ def main():
                     if mask_cls in class_names:
                         priority_mask = torch.tensor([cls == mask_cls for cls in class_names])
                         filtered_detections = detections[priority_mask]
-                        save_colored_instance_mask(filtered_detections.mask,f"{out_name}-roadmask{ext}")
+                        save_colored_instance_mask(filtered_detections.mask,f"{out_dir}/{image_name}-roadmask{ext}")
     
                         #annotated_image = sv.MaskAnnotator(
                         #    color_lookup=sv.ColorLookup.CLASS,
@@ -213,15 +215,15 @@ def main():
                         #    thickness=thickness
                         #).annotate(scene=annotated_image, detections=detections[~priority_mask])
                     else:
-                        logging.info("Road could not detected on given image!")
+                        logging.info("Road could not detected on {image_name}!")
                 if args.save_annotations:
+                    output_file = f"{out_dir}/{image_name}-masked{ext}"
                     if args.return_instance_mask:
                         annotated_image = sv.MaskAnnotator(
                             color_lookup=sv.ColorLookup.CLASS,
                             opacity=0.4
                         ).annotate(scene=annotated_image, detections=detections)
-                        output_file = f"{out_dir}/{image_name}-masked{ext}"
-                   
+                        
                     if args.show_labels:
                         annotated_image = sv.BoxAnnotator(
                             color_lookup=sv.ColorLookup.CLASS,
@@ -244,7 +246,7 @@ def main():
                         json.dump(coco_output, f, indent=4)
                     logging.info(f"Saved detections in COCO format to: {output_file}")
             else:
-                logging.info(f"No detections for: {image_path}")
+                logging.info(f"No detection found for {image_name}")
 
 if __name__ == "__main__":
     main()
