@@ -200,8 +200,8 @@ def main():
             with open(output_file, "w") as f:
                 json.dump(coco_output, f, indent=4)
             print(f"Saved detections in COCO format to: {output_file}")
-else:
-    print("No detections")
+    else:
+        print("No detections")
    
 
 if __name__ == "__main__":
