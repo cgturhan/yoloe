@@ -93,9 +93,11 @@ def parse_args():
 
 def main():
     args = parse_args()
-
+    img_path, ext = os.path.splitext(args.source)
     if not args.output:
-        out_name, ext = os.path.splitext(args.source)
+        out_name = img_path
+    else:
+        out_name = os.path.join(args.output, out_name.split('/')[-1])
                 
     image = Image.open(args.source).convert("RGB")
 
