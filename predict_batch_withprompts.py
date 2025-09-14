@@ -188,8 +188,9 @@ def main():
                                 mask=detections.mask[keep_mask] if detections.mask is not None else None,
                             )          
                         
-                # Prepare labels
+                # Prepare labels and store detections
                 class_names = [args.names[class_id] for class_id in detections.class_id.tolist()]
+                save_detections_to_cocoformat(detections, image_path, class_names)
                 if args.show_labels:
                     labels = []
                     for i, (class_name, confidence) in enumerate(zip(class_names, detections.confidence)):
@@ -243,14 +244,20 @@ def main():
                     annotated_image.save(output_file)
                     logging.info(f"Annotated image saved to: {output_file}")
     
-                if args.return_detection:
-                    coco_output = save_detections_to_cocoformat(detections, image_path, args.names)
-                    output_file =f"{out_dir}/{image_name}-annotations.json"
-                    with open(output_file, "w") as f:
-                        json.dump(coco_output, f, indent=4)
-                    logging.info(f"Saved detections in COCO format to: {output_file}")
+                #if args.return_detection:
+                #    coco_output = save_detections_to_cocoformat(detections, image_path, args.names)
+                #    output_file =f"{out_dir}/{image_name}-annotations.json"
+                #    with open(output_file, "w") as f:
+                #        json.dump(coco_output, f, indent=4)
+                3    logging.info(f"Saved detections in COCO format to: {output_file}")
             else:
                 logging.info(f"No detection found for {image_name}")
+
+    if args.return_detection:
+        output_file =f"{out_dir}/{out_cls}-annotations.json"
+        with open(output_file, "w") as f:
+            json.dump(coco_output, f, indent=4)
+        logging.info(f"Saved detections in COCO format to: {output_file}")
 
 if __name__ == "__main__":
     main()
