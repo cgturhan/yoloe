@@ -129,7 +129,10 @@ def main():
     # Collect image paths
     image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
 
-    total_batches = math.ceil(len(image_paths) / args.batch_size)
+    if not image_paths:
+        raise ValueError("No images found in image_paths!")
+
+    total_batches = (len(image_paths) + args.batch_size - 1) // args.batch_size
 
     for batch_paths in tqdm(chunked(image_paths, args.batch_size), total=total_batches, desc="Processing"):
         # Load current batch of images
@@ -146,6 +149,7 @@ def main():
             image_name = file_path.stem
             out_cls = str(file_folder.name)
             out_dir = os.path.join(args.output_folder,out_cls)
+            os.makedirs(out_dir, exist_ok=True)
             ext = str(file_path.suffix)
             if glob.glob(f"{out_dir}/{image_name}-*{ext}"):
                 continue
