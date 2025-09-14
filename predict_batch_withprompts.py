@@ -10,7 +10,7 @@ from PIL import Image
 from torchvision.ops import box_iou
 from ultralytics import YOLOE
 import supervision as sv
-from save_detections import save_detections_to_cocoformat, save_colored_instance_mask
+from save_detections import save_detections_to_cocoformat, save_colored_instance_mask, supercategory_map, default_supercategory
 from tqdm import tqdm
 import glob
 import logging
@@ -130,7 +130,6 @@ def main():
     class_name_to_id = {name: idx for idx, name in enumerate(unique_class_names)}
     
     # Also build COCO categories list
-    default_supercategory = "object"
     coco_categories = [
         {"id": idx, "name": name, "supercategory": supercategory_map.get(name, default_supercategory)}
         for name, idx in class_name_to_id.items()
