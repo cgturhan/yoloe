@@ -126,6 +126,16 @@ def main():
     model.eval()
     model.set_classes(args.names, model.get_text_pe(args.names))
 
+    unique_class_names = sorted(list(set(args.names)))  # sorted for consistency
+    class_name_to_id = {name: idx for idx, name in enumerate(unique_class_names)}
+    
+    # Also build COCO categories list
+    default_supercategory = "object"
+    coco_categories = [
+        {"id": idx, "name": name, "supercategory": supercategory_map.get(name, default_supercategory)}
+        for name, idx in class_name_to_id.items()
+    ]
+
     # Collect image paths
     image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
 
@@ -133,7 +143,8 @@ def main():
         raise ValueError("No images found in image_paths!")
 
     total_batches = (len(image_paths) + args.batch_size - 1) // args.batch_size
-
+    
+    all_coco_output = {"images": [], "annotations": [], "categories": coco_categories.copy()}
     for batch_paths in tqdm(chunked(image_paths, args.batch_size), total=total_batches, desc="Processing"):
         # Load current batch of images
         batch_images = [Image.open(str(p)).convert("RGB") for p in batch_paths]
@@ -190,7 +201,8 @@ def main():
                         
                 # Prepare labels and store detections
                 class_names = [args.names[class_id] for class_id in detections.class_id.tolist()]
-                save_detections_to_cocoformat(detections, image_path, class_names)
+                #save_detections_to_cocoformat(detections, image_path, class_names)
+                all_coco_output = save_detections_to_global_cocoformat(detections, image_path, class_name_to_id, existing_coco=all_coco_output)
                 if args.show_labels:
                     labels = []
                     for i, (class_name, confidence) in enumerate(zip(class_names, detections.confidence)):
@@ -256,7 +268,7 @@ def main():
     if args.return_detection:
         output_file =f"{out_dir}/{out_cls}-annotations.json"
         with open(output_file, "w") as f:
-            json.dump(coco_output, f, indent=4)
+            json.dump(all_coco_output, f, indent=4)
         logging.info(f"Saved detections in COCO format to: {output_file}")
 
 if __name__ == "__main__":
