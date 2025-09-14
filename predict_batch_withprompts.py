@@ -128,6 +128,7 @@ def main():
 
     unique_class_names = sorted(list(set(args.names)))  # sorted for consistency
     class_name_to_id = {name: idx for idx, name in enumerate(unique_class_names)}
+    class_id_to_name = {idx: name for name, idx in class_name_to_id.items()}
     
     # Also build COCO categories list
     coco_categories = [
@@ -201,7 +202,7 @@ def main():
                 # Prepare labels and store detections
                 class_names = [args.names[class_id] for class_id in detections.class_id.tolist()]
                 #save_detections_to_cocoformat(detections, image_path, class_names)
-                all_coco_output = save_detections_to_global_cocoformat(detections, image_path, class_name_to_id, existing_coco=all_coco_output)
+                all_coco_output = save_detections_to_global_cocoformat(detections, image_path, class_id_to_name, existing_coco=all_coco_output)
                 if args.show_labels:
                     labels = []
                     for i, (class_name, confidence) in enumerate(zip(class_names, detections.confidence)):
