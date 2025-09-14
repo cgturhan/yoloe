@@ -249,7 +249,7 @@ def main():
                 #    output_file =f"{out_dir}/{image_name}-annotations.json"
                 #    with open(output_file, "w") as f:
                 #        json.dump(coco_output, f, indent=4)
-                3    logging.info(f"Saved detections in COCO format to: {output_file}")
+                #    logging.info(f"Saved detections in COCO format to: {output_file}")
             else:
                 logging.info(f"No detection found for {image_name}")
 
