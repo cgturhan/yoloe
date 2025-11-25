@@ -26,7 +26,7 @@ def parse_args():
     )
     parser.add_argument(
         "--subset",
-        nargs="+"
+        nargs="+",
         required=False,
         help="List for a subset"
     )
