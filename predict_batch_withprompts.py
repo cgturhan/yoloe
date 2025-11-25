@@ -146,7 +146,7 @@ def main():
     if not args.subset:
         image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
     else:
-        image_paths = sorted([ p for p in os.listdir(args.subset) if Path(os.path.join(args.source, p).suffix.lower() in [".jpg", ".jpeg", ".png"]])
+        image_paths = sorted([p for p in os.listdir(args.subset) if Path(os.path.join(args.source, p)).suffix.lower() in [".jpg", ".jpeg", ".png"]])
 
     if not image_paths:
         raise ValueError("No images found in image_paths!")
