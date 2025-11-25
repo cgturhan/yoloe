@@ -25,6 +25,12 @@ def parse_args():
         help="Path to the data folder"
     )
     parser.add_argument(
+        "--subset",
+        type=list,
+        required=False,
+        help="List for a subset"
+    )
+    parser.add_argument(
         "--checkpoint",
         type=str,
         default="yoloe-v8l-seg.pt",
@@ -136,8 +142,11 @@ def main():
         for name, idx in class_name_to_id.items()
     ]
 
-    # Collect image paths
-    image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
+    # Collect image paths,
+    if not args.subset:
+        image_paths = sorted([p for p in Path(args.source).iterdir() if p.suffix.lower() in [".jpg", ".jpeg", ".png"]])
+    else:
+        image_paths = sorted([ p for p in os.listdir(args.subset) if Path(os.path.join(args.source, p).suffix.lower() in [".jpg", ".jpeg", ".png"]])
 
     if not image_paths:
         raise ValueError("No images found in image_paths!")
